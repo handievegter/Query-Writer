@@ -3,12 +3,14 @@ from datetime import datetime, timedelta
 import streamlit as st
 
 st.title("Query Expander")
+
 long_string = st.text_area(
-    "Please enter the query to expand. This app will take the given query block and append a duplicate the given query block with an incremented date (_YYYYMMDD) with a UNION ALL.",
+    "Please enter the query to expand. This app will take the given query block and append a duplicate the given query block with an incremented date (standard format: _YYYYMMDD) with a UNION ALL. \n If your block has a suffix like GROUP BY or ORDER BY, add it in the second text box.",
     ""
 )
+
 short_string=st.text_area("Please enter suffix here:","")
-days = st.number_input("Enter the number of days before or after the date in the query (negative value for days before)\n If your block has a suffix like GROUP BY or ORDER BY, add it in the second text box.", step=1,min_value=-100, max_value=100, value=0)
+days = st.number_input("Enter the number of days before or after the date in the query (negative value for days before)", step=1,min_value=-100, max_value=100, value=0)
 st.write("Days: ", days)
 
 def generate_union_strings(long_string, short_string, days):
@@ -16,8 +18,6 @@ def generate_union_strings(long_string, short_string, days):
     pattern = r'_(\d{8})' 
     # List to hold all the resulting strings (original + new versions)
     result_strings = [long_string]  # Start with the original string
-    # Find all unique date matches
-    matches = re.finditer(pattern, long_string)
     # Loop through each day offset (positive or negative based on `days`)
     for day_offset in range(1, abs(days) + 1):
         # Calculate the increment or decrement direction based on the sign of days
