@@ -1,17 +1,17 @@
 import re
 from datetime import datetime, timedelta
 import streamlit as st
-#does this go to github?
 
 st.title("Query Expander")
 long_string = st.text_area(
     "Please enter the query to expand. This app will take the given query block and append a duplicate the given query block with an incremented date (_YYYYMMDD) with a UNION ALL.",
     ""
 )
-days = st.number_input("Enter the number of days before or after the date in the query (negative value for days before)", step=1,min_value=-100, max_value=100, value=0)
+short_string=st.text_area("Please enter suffix here:","")
+days = st.number_input("Enter the number of days before or after the date in the query (negative value for days before)\n If your block has a suffix like GROUP BY or ORDER BY, add it in the second text box.", step=1,min_value=-100, max_value=100, value=0)
 st.write("Days: ", days)
 
-def generate_union_strings(long_string, days):
+def generate_union_strings(long_string, short_string, days):
     # regex to match dates in the form yyyymmdd after _
     pattern = r'_(\d{8})' 
     # List to hold all the resulting strings (original + new versions)
@@ -37,10 +37,10 @@ def generate_union_strings(long_string, days):
         # Generate a new version of the string by replacing each date with the iterated date
         new_string = re.sub(pattern, iterate_date, long_string)
         result_strings.append(new_string)
-    final_result = " UNION ALL \n".join(result_strings)
+    final_result = " UNION ALL \n".join(result_strings)+"\n"+short_string
     return final_result
 
-result = generate_union_strings(long_string, days)
+result = generate_union_strings(long_string, short_string, days)
 
 text_contents = result
 st.download_button("Download Expanded Query", text_contents, file_name="Expanded Query.txt")
