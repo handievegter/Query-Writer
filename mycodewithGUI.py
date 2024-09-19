@@ -11,7 +11,6 @@ long_string = st.text_area(
 
 short_string=st.text_area("Please enter suffix here:","")
 days = st.number_input("Enter the number of days before or after the date in the query (negative value for days before)", step=1,min_value=-100, max_value=100, value=0)
-st.write("Days: ", days)
 
 def generate_union_strings(long_string, short_string, days):
     # regex to match dates in the form yyyymmdd after _
